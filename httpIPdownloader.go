@@ -3,6 +3,7 @@ package httpIPdownloader
 import (
 	"context"
 	"crypto/tls"
+	"fmt"
 	"io"
 	"net"
 	"net/http"
@@ -58,6 +59,9 @@ func DownloadFile(url string, filename string, ip string, ua string) error {
 		return err
 	}
 	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("response error with status code = %d", resp.StatusCode)
+	}
 
 	// 创建文件
 	file, err := os.Create(filename)
