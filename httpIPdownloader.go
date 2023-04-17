@@ -28,6 +28,9 @@ func DownloadFile(url string, filename string, ip string, ua string) error {
 
 	// 自定义 DNS 解析
 	transport := &http.Transport{
+		ResponseHeaderTimeout: time.Second * 30, // 等待服务器响应头的时间
+		ExpectContinueTimeout: time.Second * 30, // 发送带有Expect: 100-continue的请求时等待服务器响应的时间
+
 		DialContext: func(ctx context.Context, network, addr string) (net.Conn, error) {
 			host, port, _ := net.SplitHostPort(addr)
 			if ip != "" {
@@ -50,7 +53,7 @@ func DownloadFile(url string, filename string, ip string, ua string) error {
 
 	client := http.Client{
 		Transport: transport,
-		Timeout:   time.Second * 30, // 请求超时时间 30 秒
+		Timeout:   0,
 	}
 
 	// 发送请求
